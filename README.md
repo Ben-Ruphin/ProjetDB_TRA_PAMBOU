@@ -31,3 +31,43 @@ Le dictionnaire doit fournir des informations supplémentaires sur chaque donné
 Fournis donc :
 1. les règles de gestion ;
 2. le dictionnaire de données brutes.
+
+
+
+
+
+
+
+| N° | Signification de la donnée              | Type              |         Taille |
+| -: | --------------------------------------- | ----------------- | -------------: |
+|  1 | Identifiant de la chaîne                | Numérique entier  |     5 chiffres |
+|  2 | Nom de la chaîne                        | Alphanumérique    |  50 caractères |
+|  3 | Description de la chaîne                | Alphanumérique    | 255 caractères |
+|  4 | Identifiant du programme                | Numérique entier  |     6 chiffres |
+|  5 | Titre du programme                      | Alphanumérique    | 100 caractères |
+|  6 | Description du programme                | Alphanumérique    | 500 caractères |
+|  7 | Durée du programme                      | Numérique entier  |     4 chiffres |
+|  8 | Année de production du programme        | Numérique entier  |     4 chiffres |
+|  9 | Identifiant de la catégorie             | Numérique entier  |     4 chiffres |
+| 10 | Nom de la catégorie                     | Alphanumérique    |  50 caractères |
+| 11 | Identifiant du producteur               | Numérique entier  |     6 chiffres |
+| 12 | Nom du producteur                       | Alphanumérique    | 100 caractères |
+| 13 | Prénom du producteur                    | Alphabétique      |  50 caractères |
+| 14 | Identifiant du présentateur/intervenant | Numérique entier  |     6 chiffres |
+| 15 | Nom du présentateur/intervenant         | Alphanumérique    |  50 caractères |
+| 16 | Prénom du présentateur/intervenant      | Alphabétique      |  50 caractères |
+| 17 | Fonction du présentateur/intervenant    | Alphanumérique    |  50 caractères |
+| 18 | Identifiant du créneau de diffusion     | Numérique entier  |     7 chiffres |
+| 19 | Date de diffusion                       | Date              |  10 caractères |
+| 20 | Heure de début de diffusion             | Heure             |   5 caractères |
+| 21 | Heure de fin de diffusion               | Heure             |   5 caractères |
+| 22 | Jour de la semaine de diffusion         | Alphanumérique    |  10 caractères |
+| 23 | Identifiant de l’émission               | Numérique entier  |     6 chiffres |
+| 24 | Nom de l’émission                       | Alphanumérique    | 100 caractères |
+| 25 | Identifiant de l’audience               | Numérique entier  |     8 chiffres |
+| 26 | Nombre de téléspectateurs               | Numérique entier  |    10 chiffres |
+| 27 | Part d’audience                         | Numérique décimal |     5 chiffres |
+| 28 | Identifiant du mode de diffusion        | Numérique entier  |     4 chiffres |
+| 29 | Nom du mode de diffusion                | Alphanumérique    |  50 caractères |
+| 30 | Type de contenu audiovisuel             | Alphanumérique    |  50 caractères |
+
