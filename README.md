@@ -3,7 +3,6 @@
 
 
 
-Prompt final utilisé :
 
 Tu travailles dans le domaine de la télédiffusion audiovisuelle.
 
