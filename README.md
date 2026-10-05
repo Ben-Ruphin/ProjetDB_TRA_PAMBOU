@@ -1,9 +1,6 @@
 # ProjetDB_TRA_PAMBOU
 " Projet en bases de données ING1 "
 
-
-
-
 Tu travailles dans le domaine de la télédiffusion audiovisuelle.
 
 Ton entreprise a comme activité de diffuser des programmes de télévision auprès du public, en assurant la programmation, la gestion des contenus audiovisuels, des chaînes, des créneaux de diffusion et des différentes modalités de distribution des programmes.
