@@ -3,7 +3,7 @@
 
 
 ## 1. Prompt final utilisé
-[Le prompt ci-dessus]
+
 
 
 Tu travailles dans le domaine de la télédiffusion audiovisuelle.
@@ -50,7 +50,7 @@ Fournis donc :
 
 
 ## 2. Règles métier / règles de gestion
-[Les règles ci-dessus]
+
 
 Dans le cadre de notre entreprise de télédiffusion audiovisuelle, nous avons identifié les règles de gestion suivantes :
 
@@ -90,7 +90,7 @@ Dans le cadre de notre entreprise de télédiffusion audiovisuelle, nous avons i
 
 
 ## 3. Dictionnaire de données
-[Le tableau ci-dessus]
+
 
 Ce dictionnaire présente les 30 données utilisées par notre
 entreprise de télédiffusion audiovisuelle, avec leur type
