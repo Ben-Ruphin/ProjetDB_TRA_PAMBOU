@@ -49,37 +49,79 @@ Fournis donc :
 
 
 
-## 2. Règles métier / règles de gestion
+## 2. Règles métier
 
 
-Dans le cadre de notre entreprise de télédiffusion audiovisuelle, nous avons identifié les règles de gestion suivantes :
+### Gestion des chaînes et des programmes
 
 - L'entreprise gère plusieurs chaînes de télévision.
-- Chaque chaîne de télévision possède un nom et une description.
-- Une chaîne de télévision peut diffuser plusieurs programmes.
-- Chaque programme possède un titre, une description et une durée.
-- Chaque programme appartient à une catégorie (sport, information, divertissement, documentaire, fiction, etc.).
+- Chaque chaîne possède un nom et une description.
+- Une chaîne peut diffuser plusieurs programmes.
+- Chaque programme possède un titre, une description, une durée en minutes et une année de production.
+- Chaque programme appartient à une seule catégorie.
 - Une catégorie peut regrouper plusieurs programmes.
-- Un même programme peut être diffusé plusieurs fois à des dates et horaires différents.
-- Chaque diffusion d'un programme est programmée sur une chaîne de télévision.
-- Chaque diffusion possède une date, une heure de début et une heure de fin.
-- Chaque créneau de diffusion correspond à une période pendant laquelle un programme est diffusé.
-- L'entreprise gère différentes émissions de télévision.
+- Les catégories comprennent notamment le sport, l'information, le divertissement, les documentaires et les fictions.
+- Un programme représente un contenu éditorial pouvant être diffusé, comme un film, un documentaire, un match ou un épisode d'émission.
+
+### Gestion des émissions et des épisodes
+
+- Une émission est un programme récurrent qui peut comporter plusieurs épisodes.
 - Chaque émission possède un nom.
-- Une émission peut être présentée par un ou plusieurs présentateurs.
-- Un présentateur peut participer à plusieurs émissions.
-- Chaque présentateur ou intervenant possède un nom, un prénom et une fonction.
-- Un programme peut être réalisé par un ou plusieurs producteurs.
+- Une émission peut comporter plusieurs épisodes.
+- Chaque épisode appartient obligatoirement à une seule émission.
+- Chaque épisode possède un numéro unique au sein de son émission.
+- Deux émissions différentes peuvent avoir des épisodes portant le même numéro.
+- Chaque épisode correspond à un seul programme pouvant être diffusé.
+- Un programme peut correspondre à un épisode d'émission ou être indépendant de toute émission.
+
+### Gestion des diffusions et des horaires
+
+- Un même programme peut être diffusé plusieurs fois.
+- Chaque diffusion concerne un seul programme et une seule chaîne.
+- Chaque diffusion possède une date et une heure de début ainsi qu'une date et une heure de fin.
+- Une diffusion peut commencer un jour et se terminer le lendemain.
+- L'heure et la date de fin d'une diffusion doivent être postérieures à son début.
+- Sur une même chaîne, deux diffusions ne peuvent pas avoir des créneaux horaires qui se chevauchent.
+- Plusieurs chaînes peuvent diffuser des programmes simultanément.
+- Les dates et horaires permettent à l'entreprise de préparer et de consulter sa grille de programmation.
+
+### Gestion des producteurs et des intervenants
+
+- Un programme peut être produit par un ou plusieurs producteurs.
 - Un producteur peut participer à la production de plusieurs programmes.
 - Chaque producteur possède un nom et un prénom.
-- L'entreprise conserve les informations relatives aux contenus audiovisuels.
-- Chaque contenu audiovisuel possède un type (vidéo, reportage, documentaire, etc.).
-- Les programmes peuvent être diffusés sur différents supports, comme la télévision, les plateformes de streaming ou les services de replay.
+- Une émission peut faire intervenir plusieurs présentateurs ou intervenants.
+- Un présentateur ou intervenant peut participer à plusieurs émissions.
+- Chaque présentateur ou intervenant possède un nom, un prénom et une fonction.
+
+### Gestion des contenus audiovisuels
+
+- L'entreprise conserve les informations relatives aux contenus audiovisuels qu'elle utilise.
+- Chaque contenu audiovisuel possède un titre, un type et une durée.
+- Les contenus peuvent correspondre à des reportages, des vidéos, des interviews ou des extraits.
+- Un programme peut utiliser plusieurs contenus audiovisuels.
+- Un même contenu audiovisuel peut être utilisé dans plusieurs programmes.
+- Un contenu audiovisuel peut être créé à partir d'un autre contenu existant, par exemple un extrait réalisé à partir d'une vidéo complète.
+- Un contenu dérivé provient au maximum d'un seul contenu d'origine.
+- Un contenu d'origine peut servir à créer plusieurs contenus dérivés.
+- Un contenu audiovisuel ne peut pas être directement ou indirectement dérivé de lui-même.
+
+### Gestion des modes de diffusion
+
+- L'entreprise propose plusieurs modes de diffusion.
+- Les programmes peuvent être distribués par la télévision, le streaming ou le replay.
 - Un programme peut être disponible sur plusieurs modes de diffusion.
+- Un même mode de diffusion peut être utilisé par plusieurs programmes.
+
+### Gestion des audiences
+
 - L'entreprise suit les audiences des programmes diffusés.
-- Pour chaque diffusion, l'entreprise peut enregistrer le nombre de téléspectateurs.
-- La part d'audience permet de mesurer le pourcentage de téléspectateurs ayant regardé un programme.
-- L'entreprise conserve les informations concernant les chaînes, les programmes, les émissions, les producteurs, les présentateurs, les horaires et les audiences afin d'assurer le suivi de ses activités.
+- Une diffusion peut disposer d'une mesure d'audience après sa réalisation.
+- Chaque mesure d'audience concerne une seule diffusion.
+- Une diffusion possède au maximum une mesure d'audience globale.
+- L'audience comprend le nombre de téléspectateurs et la part d'audience.
+- La part d'audience est exprimée en pourcentage, entre 0 et 100.
+- Le nombre de téléspectateurs ne peut pas être négatif.
 
 
 
@@ -88,13 +130,11 @@ Dans le cadre de notre entreprise de télédiffusion audiovisuelle, nous avons i
 
 
 
+## 3. Dictionnaire de données brutes
 
-## 3. Dictionnaire de données
-
-
-Ce dictionnaire présente les 30 données utilisées par notre
-entreprise de télédiffusion audiovisuelle, avec leur type
-et leur taille.
+Ce dictionnaire présente les données utilisées par notre
+entreprise de télédiffusion audiovisuelle, ainsi que leur
+type et leur taille.
 
 | N° | Signification de la donnée | Type | Taille |
 |---|---|---|---|
@@ -104,8 +144,8 @@ et leur taille.
 | 4 | Identifiant du programme | INT | 6 chiffres |
 | 5 | Titre du programme | VARCHAR | 100 caractères |
 | 6 | Description du programme | VARCHAR | 500 caractères |
-| 7 | Durée du programme (minutes) | INT | 4 chiffres |
-| 8 | Année de production du programme | CHAR | 4 caractères |
+| 7 | Durée du programme en minutes | INT | 4 chiffres |
+| 8 | Année de production | CHAR | 4 caractères |
 | 9 | Identifiant de la catégorie | INT | 4 chiffres |
 | 10 | Nom de la catégorie | VARCHAR | 50 caractères |
 | 11 | Identifiant du producteur | INT | 6 chiffres |
@@ -115,19 +155,24 @@ et leur taille.
 | 15 | Nom du présentateur/intervenant | VARCHAR | 50 caractères |
 | 16 | Prénom du présentateur/intervenant | VARCHAR | 50 caractères |
 | 17 | Fonction du présentateur/intervenant | VARCHAR | 50 caractères |
-| 18 | Identifiant du créneau de diffusion | INT | 7 chiffres |
-| 19 | Date de diffusion | DATE | 10 caractères |
+| 18 | Identifiant de la diffusion | INT | 7 chiffres |
+| 19 | Date de début de diffusion | DATE | 10 caractères |
 | 20 | Heure de début de diffusion | TIME | 8 caractères |
 | 21 | Heure de fin de diffusion | TIME | 8 caractères |
-| 22 | Jour de la semaine de diffusion | VARCHAR | 10 caractères |
-| 23 | Identifiant de l'émission | INT | 6 chiffres |
-| 24 | Nom de l'émission | VARCHAR | 100 caractères |
-| 25 | Identifiant de l'audience | INT | 8 chiffres |
-| 26 | Nombre de téléspectateurs | INT | 10 chiffres |
-| 27 | Part d'audience | DECIMAL | 5 chiffres (dont 2 décimales) |
-| 28 | Identifiant du mode de diffusion | INT | 4 chiffres |
-| 29 | Nom du mode de diffusion | VARCHAR | 50 caractères |
-| 30 | Type de contenu audiovisuel | VARCHAR | 50 caractères |
+| 22 | Identifiant de l'émission | INT | 6 chiffres |
+| 23 | Nom de l'émission | VARCHAR | 100 caractères |
+| 24 | Identifiant de l'audience | INT | 8 chiffres |
+| 25 | Nombre de téléspectateurs | BIGINT | 10 chiffres |
+| 26 | Part d'audience | DECIMAL | 5 chiffres dont 2 décimales |
+| 27 | Identifiant du mode de diffusion | INT | 4 chiffres |
+| 28 | Nom du mode de diffusion | VARCHAR | 50 caractères |
+| 29 | Type de contenu audiovisuel | VARCHAR | 50 caractères |
+| 30 | Identifiant du contenu audiovisuel | INT | 6 chiffres |
+| 31 | Titre du contenu audiovisuel | VARCHAR | 100 caractères |
+| 32 | Durée du contenu audiovisuel en minutes | INT | 4 chiffres |
+| 33 | Numéro de l'épisode | INT | 4 chiffres |
+| 34 | Date de fin de diffusion | DATE | 10 caractères |
+
 
 
 
