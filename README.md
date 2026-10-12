@@ -51,77 +51,86 @@ Fournis donc :
 
 ## 2. Règles métier
 
+Dans le cadre de notre entreprise de télédiffusion audiovisuelle, nous avons identifié les règles de gestion suivantes :
 
 ### Gestion des chaînes et des programmes
 
 - L'entreprise gère plusieurs chaînes de télévision.
 - Chaque chaîne possède un nom et une description.
-- Une chaîne peut diffuser plusieurs programmes.
+- Une chaîne peut diffuser plusieurs programmes à des dates et horaires différents.
 - Chaque programme possède un titre, une description, une durée en minutes et une année de production.
-- Chaque programme appartient à une seule catégorie.
+- Un programme représente un contenu éditorial pouvant être diffusé, comme un film, un documentaire, un événement sportif ou un épisode d'émission.
+- Chaque programme appartient obligatoirement à une seule catégorie.
 - Une catégorie peut regrouper plusieurs programmes.
 - Les catégories comprennent notamment le sport, l'information, le divertissement, les documentaires et les fictions.
-- Un programme représente un contenu éditorial pouvant être diffusé, comme un film, un documentaire, un match ou un épisode d'émission.
 
 ### Gestion des émissions et des épisodes
 
-- Une émission est un programme récurrent qui peut comporter plusieurs épisodes.
-- Chaque émission possède un nom.
+- Une émission est une production télévisuelle récurrente qui peut comporter plusieurs épisodes.
+- Chaque émission possède un nom qui permet de la distinguer des autres émissions.
 - Une émission peut comporter plusieurs épisodes.
 - Chaque épisode appartient obligatoirement à une seule émission.
 - Chaque épisode possède un numéro unique au sein de son émission.
-- Deux émissions différentes peuvent avoir des épisodes portant le même numéro.
-- Chaque épisode correspond à un seul programme pouvant être diffusé.
+- Deux émissions différentes peuvent posséder des épisodes ayant le même numéro.
+- Pour identifier précisément un épisode, il est nécessaire de connaître son numéro ainsi que l'émission à laquelle il appartient.
+- Chaque épisode correspond obligatoirement à un seul programme pouvant être diffusé.
 - Un programme peut correspondre à un épisode d'émission ou être indépendant de toute émission.
+- Un programme ne peut correspondre qu'à un seul épisode au maximum.
+- Le nom de l'émission désigne la production récurrente, tandis que le titre du programme désigne le contenu précis pouvant être diffusé.
 
 ### Gestion des diffusions et des horaires
 
-- Un même programme peut être diffusé plusieurs fois.
-- Chaque diffusion concerne un seul programme et une seule chaîne.
-- Chaque diffusion possède une date et une heure de début ainsi qu'une date et une heure de fin.
+- Un même programme peut être diffusé plusieurs fois, sur une ou plusieurs chaînes.
+- Chaque diffusion concerne obligatoirement un seul programme et une seule chaîne de télévision.
+- Chaque diffusion possède une date de début, une heure de début, une date de fin et une heure de fin.
 - Une diffusion peut commencer un jour et se terminer le lendemain.
-- L'heure et la date de fin d'une diffusion doivent être postérieures à son début.
+- La date et l'heure de fin d'une diffusion doivent être postérieures à sa date et son heure de début.
 - Sur une même chaîne, deux diffusions ne peuvent pas avoir des créneaux horaires qui se chevauchent.
 - Plusieurs chaînes peuvent diffuser des programmes simultanément.
-- Les dates et horaires permettent à l'entreprise de préparer et de consulter sa grille de programmation.
+- Les dates et horaires permettent à l'entreprise d'organiser et de consulter sa grille de programmation.
 
 ### Gestion des producteurs et des intervenants
 
 - Un programme peut être produit par un ou plusieurs producteurs.
 - Un producteur peut participer à la production de plusieurs programmes.
 - Chaque producteur possède un nom et un prénom.
-- Une émission peut faire intervenir plusieurs présentateurs ou intervenants.
-- Un présentateur ou intervenant peut participer à plusieurs émissions.
-- Chaque présentateur ou intervenant possède un nom, un prénom et une fonction.
+- L'entreprise conserve les informations relatives aux personnes intervenant dans les émissions.
+- Les intervenants peuvent être des présentateurs, des journalistes, des chroniqueurs ou des experts.
+- Chaque intervenant possède un nom, un prénom et une fonction générale.
+- Une émission peut accueillir plusieurs intervenants.
+- Un intervenant peut participer à plusieurs émissions.
+- Les présentateurs sont considérés comme des intervenants et ne sont donc pas gérés séparément.
 
 ### Gestion des contenus audiovisuels
 
-- L'entreprise conserve les informations relatives aux contenus audiovisuels qu'elle utilise.
-- Chaque contenu audiovisuel possède un titre, un type et une durée.
-- Les contenus peuvent correspondre à des reportages, des vidéos, des interviews ou des extraits.
+- L'entreprise conserve les informations relatives aux contenus audiovisuels utilisés dans ses programmes.
+- Chaque contenu audiovisuel possède un titre, un type et une durée en minutes.
+- Les contenus audiovisuels peuvent correspondre à des reportages, des vidéos, des interviews ou des extraits.
 - Un programme peut utiliser plusieurs contenus audiovisuels.
 - Un même contenu audiovisuel peut être utilisé dans plusieurs programmes.
-- Un contenu audiovisuel peut être créé à partir d'un autre contenu existant, par exemple un extrait réalisé à partir d'une vidéo complète.
-- Un contenu dérivé provient au maximum d'un seul contenu d'origine.
-- Un contenu d'origine peut servir à créer plusieurs contenus dérivés.
+- Un contenu audiovisuel peut être créé à partir d'un autre contenu audiovisuel existant, par exemple un extrait réalisé à partir d'un reportage complet.
+- Un contenu audiovisuel d'origine peut servir à créer plusieurs contenus dérivés.
+- Un contenu audiovisuel dérivé possède au maximum un seul contenu d'origine direct.
+- Certains contenus audiovisuels sont des contenus originaux qui ne proviennent d'aucun autre contenu.
 - Un contenu audiovisuel ne peut pas être directement ou indirectement dérivé de lui-même.
 
 ### Gestion des modes de diffusion
 
-- L'entreprise propose plusieurs modes de diffusion.
-- Les programmes peuvent être distribués par la télévision, le streaming ou le replay.
+- L'entreprise propose plusieurs modes de diffusion pour distribuer ses programmes.
+- Les programmes peuvent être distribués par la télévision, le streaming ou les services de replay.
+- Chaque mode de diffusion possède un nom.
 - Un programme peut être disponible sur plusieurs modes de diffusion.
-- Un même mode de diffusion peut être utilisé par plusieurs programmes.
+- Un même mode de diffusion peut être utilisé pour plusieurs programmes.
 
 ### Gestion des audiences
 
-- L'entreprise suit les audiences des programmes diffusés.
-- Une diffusion peut disposer d'une mesure d'audience après sa réalisation.
-- Chaque mesure d'audience concerne une seule diffusion.
+- L'entreprise suit les audiences des programmes diffusés sur ses chaînes.
+- Chaque diffusion peut disposer d'une mesure d'audience après sa réalisation.
+- Chaque mesure d'audience concerne obligatoirement une seule diffusion.
 - Une diffusion possède au maximum une mesure d'audience globale.
-- L'audience comprend le nombre de téléspectateurs et la part d'audience.
-- La part d'audience est exprimée en pourcentage, entre 0 et 100.
+- Une mesure d'audience comprend le nombre de téléspectateurs et la part d'audience du programme diffusé.
 - Le nombre de téléspectateurs ne peut pas être négatif.
+- La part d'audience est exprimée en pourcentage et doit être comprise entre 0 et 100.
 
 
 
