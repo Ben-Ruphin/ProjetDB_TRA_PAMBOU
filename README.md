@@ -151,10 +151,10 @@ type et leur taille.
 | 11 | Identifiant du producteur | INT | 6 chiffres |
 | 12 | Nom du producteur | VARCHAR | 100 caractères |
 | 13 | Prénom du producteur | VARCHAR | 50 caractères |
-| 14 | Identifiant du présentateur/intervenant | INT | 6 chiffres |
-| 15 | Nom du présentateur/intervenant | VARCHAR | 50 caractères |
-| 16 | Prénom du présentateur/intervenant | VARCHAR | 50 caractères |
-| 17 | Fonction du présentateur/intervenant | VARCHAR | 50 caractères |
+| 14 | Identifiant de l'intervenant | INT | 6 chiffres |
+| 15 | Nom de l'intervenant | VARCHAR | 50 caractères |
+| 16 | Prénom de l'intervenant | VARCHAR | 50 caractères |
+| 17 | Fonction de l'intervenant | VARCHAR | 50 caractères |
 | 18 | Identifiant de la diffusion | INT | 7 chiffres |
 | 19 | Date de début de diffusion | DATE | 10 caractères |
 | 20 | Heure de début de diffusion | TIME | 8 caractères |
