@@ -185,4 +185,8 @@ type et leur taille.
 
 
 
+## 3. MCD obtenu
+
+<img width="679" height="389" alt="image" src="https://github.com/user-attachments/assets/93093296-21ea-41bb-9898-b91a2365a8a4" />
+
 
