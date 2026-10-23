@@ -194,7 +194,6 @@ type et leur taille.
 
 Le MLD a été généré à partir du MCD réalisé avec Looping.
 
-Les clés primaires sont indiquées en gras dans les descriptions ci-dessous.
 Le symbole `#` représente une clé étrangère.
 Le symbole `*` indique une clé étrangère facultative.
 
