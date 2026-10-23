@@ -184,8 +184,58 @@ type et leur taille.
 
 
 
-## 3. MCD obtenu
+## 3. Modèle Conceptuel de Données (MCD)
 
 <img width="1487" height="797" alt="image" src="https://github.com/user-attachments/assets/59ecb34c-131b-4d6a-92e8-23a393103264" />
 
+
+## 4. Modèle Logique de Données (MLD)
+
+
+Le MLD a été généré à partir du MCD réalisé avec Looping.
+
+Les clés primaires sont indiquées en gras dans les descriptions ci-dessous.
+Le symbole `#` représente une clé étrangère.
+Le symbole `*` indique une clé étrangère facultative.
+
+```text
+chaine = (id_chaine INT, nom_chaine VARCHAR(50), description_chaine VARCHAR(250));
+
+categorie = (id_categorie INT, nom_categorie VARCHAR(100));
+
+producteur = (id_producteur INT, nom_producteur VARCHAR(100), prenom_producteur VARCHAR(100));
+
+intervenant = (id_intervenant INT, nom_intervenant VARCHAR(100), prenom_intervenant VARCHAR(100), fonction_intervenant VARCHAR(100));
+
+emission = (id_emission INT, nom_emission VARCHAR(100));
+
+mode_diffusion = (id_mode INT, nom_mode VARCHAR(100));
+
+contenu_audiovisuel = (id_contenu INT, titre_contenu VARCHAR(100), type_contenu VARCHAR(100), duree_contenu INT, #id_contenu_origine*);
+
+programme = (Id_programme INT, titre_programme VARCHAR(100), description_programmme VARCHAR(255), duree_programme INT, annee_production INT, #id_categorie);
+
+diffusion = (id_diffusion INT, date_debut_diffusion DATE, heure_debut_diffusion TIME, heure_fin_diffusion TIME, date_fin_diffusion DATE, #Id_programme, #id_chaine);
+
+audience = (id_audience INT, part_audience DECIMAL(5,2), nbre_telespectateurs BIGINT, #id_diffusion);
+
+episode = (#id_emission, num_episode INT, #Id_programme);
+
+produire = (#Id_programme, #id_producteur);
+
+participer = (#id_intervenant, #id_emission);
+
+utiliser = (#Id_programme, #id_contenu);
+
+distribuer = (#Id_programme, #id_mode);
+```
+
+### Particularités du MLD
+
+- **Entité faible EPISODE :** la clé primaire est composée de `id_emission` et `num_episode`.
+- **Association récursive DERIVER_DE :** `id_contenu_origine` est une clé étrangère facultative qui référence `contenu_audiovisuel`.
+- **Associations plusieurs-à-plusieurs :** `produire`, `participer`, `utiliser` et `distribuer` sont représentées par des tables d'association dont les clés primaires sont composées des deux clés étrangères.
+- **Autres tables :** leur clé primaire correspond à l'attribut `id` de chaque table.
+
+Le modèle contient **15 tables**, dont 4 tables d'association.
 
