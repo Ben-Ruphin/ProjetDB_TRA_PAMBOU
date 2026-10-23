@@ -184,12 +184,12 @@ type et leur taille.
 
 
 
-## 3. Modèle Conceptuel de Données (MCD)
+## 4. Modèle Conceptuel de Données (MCD)
 
 <img width="1487" height="797" alt="image" src="https://github.com/user-attachments/assets/59ecb34c-131b-4d6a-92e8-23a393103264" />
 
 
-## 4. Modèle Logique de Données (MLD)
+## 5. Modèle Logique de Données (MLD)
 
 
 Le MLD a été généré à partir du MCD réalisé avec Looping.
