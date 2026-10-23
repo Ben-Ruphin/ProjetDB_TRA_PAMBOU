@@ -192,7 +192,6 @@ type et leur taille.
 ## 5. Modèle Logique de Données (MLD)
 
 
-Le MLD a été généré à partir du MCD réalisé avec Looping.
 
 Le symbole `#` représente une clé étrangère.
 Le symbole `*` indique une clé étrangère facultative.
