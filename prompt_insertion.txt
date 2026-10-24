@@ -1,0 +1,294 @@
+PROMPT FINAL UTILISE POUR GENERER LES INSERTIONS SQL
+MINI-PROJET MERISE - TELEDIFFUSION AUDIOVISUELLE
+
+RÔLE ET CONTEXTE
+Tu joues le rôle d'un responsable des données d'une entreprise fictive de télédiffusion audiovisuelle.
+L'entreprise gère des chaînes, des catégories, des programmes, des émissions et épisodes, des contenus audiovisuels, des producteurs, des intervenants, des modes de distribution, des diffusions et leurs audiences.
+Les données doivent être fictives, variées, plausibles et exploitables pour des requêtes statistiques et de programmation.
+Ne présente aucune donnée inventée comme un relevé officiel d'une chaîne existante.
+
+INSTRUCTIONS
+Donne les requêtes d'insertion permettant de remplir la base de données MySQL 8.0.16+ dont le modèle relationnel est le suivant :
+
+chaine = (id_chaine INT, nom_chaine VARCHAR(50), description_chaine VARCHAR(250)); PK = id_chaine.
+categorie = (id_categorie INT, nom_categorie VARCHAR(100)); PK = id_categorie.
+producteur = (id_producteur INT, nom_producteur VARCHAR(100), prenom_producteur VARCHAR(100)); PK = id_producteur.
+intervenant = (id_intervenant INT, nom_intervenant VARCHAR(100), prenom_intervenant VARCHAR(100), fonction_intervenant VARCHAR(100)); PK = id_intervenant.
+emission = (id_emission INT, nom_emission VARCHAR(100)); PK = id_emission.
+mode_diffusion = (id_mode INT, nom_mode VARCHAR(100)); PK = id_mode.
+contenu_audiovisuel = (id_contenu INT, titre_contenu VARCHAR(100), type_contenu VARCHAR(100), duree_contenu INT, #id_contenu_origine INT NULL); PK = id_contenu. FK id_contenu_origine -> contenu_audiovisuel.id_contenu.
+programme = (id_programme INT, titre_programme VARCHAR(100), description_programme VARCHAR(255), duree_programme INT, annee_production INT, #id_categorie INT); PK = id_programme.
+diffusion = (id_diffusion INT, date_debut_diffusion DATE, heure_debut_diffusion TIME, heure_fin_diffusion TIME, date_fin_diffusion DATE, #id_programme INT, #id_chaine INT); PK = id_diffusion.
+audience = (id_audience INT, part_audience DECIMAL(5,2), nbre_telespectateurs BIGINT, #id_diffusion INT UNIQUE); PK = id_audience.
+episode = (#id_emission INT, num_episode INT, #id_programme INT UNIQUE); PK = (id_emission,num_episode).
+produire = (#id_programme INT, #id_producteur INT); PK = (id_programme,id_producteur).
+participer = (#id_intervenant INT, #id_emission INT); PK = (id_intervenant,id_emission).
+utiliser = (#id_programme INT, #id_contenu INT); PK = (id_programme,id_contenu).
+distribuer = (#id_programme INT, #id_mode INT); PK = (id_programme,id_mode).
+
+Les clés primaires sont indiquées après chaque relation. Les clés étrangères portent le symbole # et doivent avoir le même type et nom que les clés primaires référencées.
+
+VOLUMES DEMANDES (exactement)
+- chaine : 12 lignes
+- categorie : 10 lignes
+- producteur : 24 lignes
+- intervenant : 30 lignes
+- emission : 12 lignes
+- mode_diffusion : 5 lignes
+- contenu_audiovisuel : 90 lignes
+- programme : 120 lignes
+- episode : 48 lignes
+- produire : 220 lignes
+- participer : 70 lignes
+- utiliser : 210 lignes
+- distribuer : 205 lignes
+- diffusion : 240 lignes
+- audience : 210 lignes
+- Total : 1506 lignes.
+
+REGLES DE COHERENCE
+- Commencer par remplir les tables sans clés étrangères : chaine, categorie, producteur, intervenant, emission, mode_diffusion.
+- Remplir les contenus audiovisuels originaux (id_contenu_origine NULL) avant leurs contenus dérivés, puis les programmes, épisodes et associations.
+- Chaque episode appartient à une seule émission; les numéros 1, 2, etc. peuvent être réutilisés dans des émissions différentes. L'identifiant complet est (id_emission,num_episode).
+- Chaque épisode correspond à un seul programme, et un programme ne correspond jamais à plusieurs épisodes. Prévoir des programmes indépendants sans épisode.
+- Chaque programme appartient à une catégorie existante. Chaque programme doit être associé à au moins un producteur et au moins un mode de diffusion.
+- Chaque contenu dérivé a au plus une origine directe; aucune chaîne d'origines ne doit contenir de cycle.
+- Chaque diffusion est associée à une seule chaîne et un seul programme. Sur une même chaîne, deux diffusions ne se chevauchent pas. Des diffusions traversant minuit sont autorisées si les dates de fin sont exactes.
+- Une diffusion possède au plus une audience; laisser quelques diffusions sans audience. Part d'audience entre 0 et 100 et nombre de téléspectateurs non négatif.
+- Prévoir de la diversité dans les catégories, les programmes, les horaires, les durées, les chiffres d'audience et les personnes; les noms/prénoms fictifs doivent être mixtes et d'origines diverses.
+- Chaque clé étrangère non NULL doit référencer une ligne déjà insérée. Aucun doublon de clé primaire, aucune chaîne vide ou composée uniquement d'espaces dans les champs contrôlés.
+- Ne pas désactiver les vérifications de clés étrangères ni les triggers et ne pas utiliser INSERT IGNORE.
+- Les tables sont initialement vides et le script ne doit être exécuté qu'une seule fois.
+
+CONTRAINTES SQL DE VALIDATION A RESPECTER
+Le fichier 2_contraintes.sql existant est reproduit ci-dessous pour fournir les règles précises :
+
+-- ================================================================
+-- MINI-PROJET MERISE : TELEDIFFUSION AUDIOVISUELLE
+-- 2_contraintes.sql - MySQL 8.0.16+
+-- A executer apres 1_creation.sql et avant 3_insertion.sql.
+-- Hypothese : les tables sont vides lors de la premiere execution.
+-- Ne pas relancer les ALTER TABLE une seconde fois sans retirer
+-- prealablement les contraintes deja creees.
+-- ================================================================
+
+USE telediffusion;
+
+-- ================================================================
+-- 1. CONTROLES DES CHAMPS DE DESCRIPTION / IDENTIFICATION
+-- ================================================================
+
+ALTER TABLE chaine
+    ADD CONSTRAINT chk_chaine_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_chaine)) > 0),
+    ADD CONSTRAINT chk_chaine_description
+        CHECK (description_chaine IS NOT NULL
+               AND CHAR_LENGTH(TRIM(description_chaine)) > 0);
+
+ALTER TABLE categorie
+    ADD CONSTRAINT chk_categorie_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_categorie)) > 0),
+    ADD CONSTRAINT uq_categorie_nom UNIQUE (nom_categorie);
+
+ALTER TABLE producteur
+    ADD CONSTRAINT chk_producteur_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_producteur)) > 0),
+    ADD CONSTRAINT chk_producteur_prenom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(prenom_producteur)) > 0);
+
+ALTER TABLE intervenant
+    ADD CONSTRAINT chk_intervenant_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_intervenant)) > 0),
+    ADD CONSTRAINT chk_intervenant_prenom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(prenom_intervenant)) > 0),
+    ADD CONSTRAINT chk_intervenant_fonction
+        CHECK (fonction_intervenant IS NOT NULL
+               AND CHAR_LENGTH(TRIM(fonction_intervenant)) > 0);
+
+ALTER TABLE emission
+    ADD CONSTRAINT chk_emission_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_emission)) > 0),
+    ADD CONSTRAINT uq_emission_nom UNIQUE (nom_emission);
+
+ALTER TABLE mode_diffusion
+    ADD CONSTRAINT chk_mode_nom_non_vide
+        CHECK (CHAR_LENGTH(TRIM(nom_mode)) > 0),
+    ADD CONSTRAINT uq_mode_nom UNIQUE (nom_mode);
+
+-- ================================================================
+-- 2. VALIDATION DES PROGRAMMES, CONTENUS ET EPISODES
+-- ================================================================
+
+ALTER TABLE programme
+    ADD CONSTRAINT chk_programme_titre_non_vide
+        CHECK (CHAR_LENGTH(TRIM(titre_programme)) > 0),
+    ADD CONSTRAINT chk_programme_description
+        CHECK (description_programme IS NOT NULL
+               AND CHAR_LENGTH(TRIM(description_programme)) > 0),
+    ADD CONSTRAINT chk_programme_duree_positive
+        CHECK (duree_programme IS NOT NULL AND duree_programme > 0),
+    ADD CONSTRAINT chk_programme_annee_quatre_chiffres
+        CHECK (annee_production IS NOT NULL
+               AND annee_production BETWEEN 1000 AND 9999);
+
+ALTER TABLE contenu_audiovisuel
+    ADD CONSTRAINT chk_contenu_titre_non_vide
+        CHECK (CHAR_LENGTH(TRIM(titre_contenu)) > 0),
+    ADD CONSTRAINT chk_contenu_type_non_vide
+        CHECK (type_contenu IS NOT NULL
+               AND CHAR_LENGTH(TRIM(type_contenu)) > 0),
+    ADD CONSTRAINT chk_contenu_duree_positive
+        CHECK (duree_contenu IS NOT NULL AND duree_contenu > 0);
+
+ALTER TABLE episode
+    ADD CONSTRAINT chk_episode_numero_positif
+        CHECK (num_episode > 0);
+
+-- ================================================================
+-- 3. VALIDATION DES AUDIENCES
+-- ================================================================
+
+ALTER TABLE audience
+    ADD CONSTRAINT chk_audience_part_borne
+        CHECK (part_audience IS NOT NULL
+               AND part_audience BETWEEN 0 AND 100),
+    ADD CONSTRAINT chk_audience_telespectateurs
+        CHECK (nbre_telespectateurs IS NOT NULL
+               AND nbre_telespectateurs >= 0);
+
+-- ================================================================
+-- 4. VALIDATION DES DATES ET HORAIRES DE DIFFUSION
+-- ================================================================
+
+ALTER TABLE diffusion
+    ADD CONSTRAINT chk_diffusion_ordre_chronologique
+        CHECK (
+            date_fin_diffusion > date_debut_diffusion
+            OR (
+                date_fin_diffusion = date_debut_diffusion
+                AND heure_fin_diffusion > heure_debut_diffusion
+            )
+        ),
+    ADD CONSTRAINT chk_diffusion_heure_debut
+        CHECK (heure_debut_diffusion BETWEEN '00:00:00' AND '23:59:59'),
+    ADD CONSTRAINT chk_diffusion_heure_fin
+        CHECK (heure_fin_diffusion BETWEEN '00:00:00' AND '23:59:59');
+
+-- ================================================================
+-- 5. TRIGGERS : INTERDIRE LE CHEVAUCHEMENT DES DIFFUSIONS
+-- Sur la meme chaine, deux intervalles [debut, fin[ ne doivent
+-- pas se superposer. Deux emissions consecutives peuvent se
+-- toucher exactement a la frontiere de leurs horaires.
+-- ================================================================
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS trg_diffusion_sans_chevauchement_ins$$
+CREATE TRIGGER trg_diffusion_sans_chevauchement_ins
+BEFORE INSERT ON diffusion
+FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM diffusion AS d
+        WHERE d.id_chaine = NEW.id_chaine
+          AND TIMESTAMP(d.date_debut_diffusion, d.heure_debut_diffusion)
+              < TIMESTAMP(NEW.date_fin_diffusion, NEW.heure_fin_diffusion)
+          AND TIMESTAMP(d.date_fin_diffusion, d.heure_fin_diffusion)
+              > TIMESTAMP(NEW.date_debut_diffusion, NEW.heure_debut_diffusion)
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Chevauchement de diffusions sur cette chaine';
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS trg_diffusion_sans_chevauchement_upd$$
+CREATE TRIGGER trg_diffusion_sans_chevauchement_upd
+BEFORE UPDATE ON diffusion
+FOR EACH ROW
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM diffusion AS d
+        WHERE d.id_chaine = NEW.id_chaine
+          AND d.id_diffusion <> OLD.id_diffusion
+          AND TIMESTAMP(d.date_debut_diffusion, d.heure_debut_diffusion)
+              < TIMESTAMP(NEW.date_fin_diffusion, NEW.heure_fin_diffusion)
+          AND TIMESTAMP(d.date_fin_diffusion, d.heure_fin_diffusion)
+              > TIMESTAMP(NEW.date_debut_diffusion, NEW.heure_debut_diffusion)
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Chevauchement de diffusions sur cette chaine';
+    END IF;
+END$$
+
+-- ================================================================
+-- 6. TRIGGERS : DERIVATION DES CONTENUS AUDIOVISUELS
+-- Un contenu ne peut pas etre son propre ancetre. On ne met pas
+-- de CHECK sur id_contenu_origine car cette cle etrangere utilise
+-- ON DELETE SET NULL et ON UPDATE CASCADE dans 1_creation.sql.
+-- ================================================================
+
+DROP TRIGGER IF EXISTS trg_contenu_pas_de_cycle_ins$$
+CREATE TRIGGER trg_contenu_pas_de_cycle_ins
+BEFORE INSERT ON contenu_audiovisuel
+FOR EACH ROW
+BEGIN
+    DECLARE v_ancetre INT;
+    SET v_ancetre = NEW.id_contenu_origine;
+
+    WHILE v_ancetre IS NOT NULL DO
+        IF v_ancetre = NEW.id_contenu THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Derivation cyclique interdite';
+        END IF;
+
+        SELECT MAX(c.id_contenu_origine)
+          INTO v_ancetre
+          FROM contenu_audiovisuel AS c
+         WHERE c.id_contenu = v_ancetre;
+    END WHILE;
+END$$
+
+DROP TRIGGER IF EXISTS trg_contenu_pas_de_cycle_upd$$
+CREATE TRIGGER trg_contenu_pas_de_cycle_upd
+BEFORE UPDATE ON contenu_audiovisuel
+FOR EACH ROW
+BEGIN
+    DECLARE v_ancetre INT;
+    SET v_ancetre = NEW.id_contenu_origine;
+
+    WHILE v_ancetre IS NOT NULL DO
+        IF v_ancetre = NEW.id_contenu THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Derivation cyclique interdite';
+        END IF;
+
+        SELECT MAX(c.id_contenu_origine)
+          INTO v_ancetre
+          FROM contenu_audiovisuel AS c
+         WHERE c.id_contenu = v_ancetre;
+    END WHILE;
+END$$
+
+DELIMITER ;
+
+-- ================================================================
+-- NOTES :
+-- 1. Les contraintes PK, FK, NOT NULL et UNIQUE(id_diffusion dans
+--    audience, id_programme dans episode) existent deja dans
+--    1_creation.sql et ne sont pas recreees ici.
+-- 2. Il faut executer ce script avant de charger les donnees.
+-- 3. L'obligation d'au moins un producteur pour chaque programme
+--    n'est pas garantie par de simples CHECK SQL.
+-- 4. Les triggers anti-chevauchement demonstrent la regle metier,
+--    mais ne suffisent pas a garantir l'absence de courses lors
+--    d'insertions strictement concurrentes sans verrouillage adapte.
+-- ================================================================
+
+
+FORMAT DE SORTIE ATTENDU
+Fournis uniquement un script SQL MySQL exécutable dans le fichier 3_insertion.sql, sans CREATE TABLE ni ALTER TABLE.
+Utilise des INSERT INTO avec la liste explicite des colonnes; regroupe les valeurs en lots raisonnables, dans un ordre compatible avec les clés étrangères.
+Commence par USE telediffusion; SET NAMES utf8mb4; START TRANSACTION; et termine par COMMIT;.
+Ajoute des commentaires de section et, à la fin, des SELECT COUNT(*) pour vérifier les nombres de lignes.
