@@ -237,3 +237,150 @@ distribuer = (#Id_programme, #id_mode);
 
 Le modèle contient **15 tables**, dont 4 tables d'association.
 
+
+
+## V. Interrogation de la base de données
+
+### 1. Scénario d'utilisation
+
+**Rôle :** responsable de la programmation et des audiences d'une entreprise de télédiffusion audiovisuelle fictive.
+
+**Situation :** avant de préparer la prochaine grille de programmation, cette personne souhaite étudier les programmes déjà diffusés sur les chaînes, la répartition des catégories et les performances d'audience.
+
+**Données à extraire :**
+
+- Les programmes disponibles, leurs durées, leurs années de production et leurs catégories.
+- Les types de contenus audiovisuels disponibles.
+- Le nombre de diffusions par chaîne et les émissions comportant plusieurs épisodes.
+- La part d'audience moyenne par chaîne et le cumul de téléspectateurs par programme.
+- Les programmes diffusés sur une chaîne, les diffusions sans mesure d'audience et les modes de diffusion des programmes.
+- Les programmes sans épisode et les programmes présentant les durées les plus élevées.
+
+**Objectif :** aider le responsable à identifier les programmes adaptés aux chaînes, à repérer les informations d'audience manquantes et à orienter ses choix pour la prochaine grille.
+
+Le fichier [`4_interrogation.sql`](4_interrogation.sql) contient **21 requêtes** et précise en commentaire les données recherchées pour chacune :
+
+| Famille de requêtes | Numéros | Nombre |
+|---|---|---:|
+| Sélections, projections, `ORDER BY`, `DISTINCT`, `LIKE`, `IN`, `BETWEEN` | Q01 à Q05 | 5 |
+| Agrégations, `GROUP BY`, `HAVING` | Q06 à Q10 | 5 |
+| Jointures internes, externes et multiples | Q11 à Q15 | 5 |
+| Requêtes imbriquées : `IN`, `NOT IN`, `EXISTS`, `NOT EXISTS`, `ANY`, `ALL` | Q16 à Q21 | 6 |
+| **Total** | | **21** |
+
+### 2. Analyse de deux plans d'exécution d'une requête
+
+#### Requête retenue : Q11
+
+**Besoin :** retrouver les diffusions de la chaîne *Horizon TV* (`id_chaine = 1`) qui concernent des programmes d'au moins **60 minutes**.
+
+```sql
+SELECT d.id_diffusion, c.nom_chaine,
+       p.titre_programme, p.duree_programme
+FROM chaine AS c
+INNER JOIN diffusion AS d ON d.id_chaine = c.id_chaine
+INNER JOIN programme AS p ON p.id_programme = d.id_programme
+WHERE c.id_chaine = 1
+  AND p.duree_programme >= 60
+ORDER BY d.id_diffusion;
+```
+
+Cette requête utilise **trois opérateurs de l'algèbre relationnelle** :
+
+- **Sélection** `σ` : ne garder que la chaîne 1 et les programmes d'au moins 60 minutes.
+- **Jointure** `⋈` : associer les tables `chaine`, `diffusion` et `programme`.
+- **Projection** `π` : ne conserver que `id_diffusion`, `nom_chaine`, `titre_programme` et `duree_programme`.
+
+Le tri `ORDER BY` est exécuté à la fin, de manière identique dans les deux plans ; nous ne l'incluons pas dans le calcul simplifié ci-dessous.
+
+#### Effectifs observés dans `3_insertion.sql`
+
+| Relation / résultat | Nombre de lignes |
+|---|---:|
+| `CHAINE` | 12 |
+| `DIFFUSION` | 240 |
+| `PROGRAMME` | 120 |
+| `σ id_chaine = 1 (CHAINE)` | 1 |
+| `σ duree_programme >= 60 (PROGRAMME)` | 72 |
+| Diffusions de la chaîne 1 | 20 |
+| Résultat final de Q11 | **16** |
+
+Ces effectifs correspondent **au jeu de données généré par `3_insertion.sql`**, avant toute modification de données.
+
+#### Plan A : jointures avant les sélections (non optimisé)
+
+```mermaid
+flowchart TB
+    A0["π colonnes demandées : 16 lignes"] --> A1["σ chaîne 1 ET durée ≥ 60 : 16 lignes"]
+    A1 --> A2["⋈ diffusion.id_programme = programme.id_programme : 240 lignes"]
+    A2 --> A3["⋈ chaine.id_chaine = diffusion.id_chaine : 240 lignes"]
+    A2 --> A4["PROGRAMME : 120 lignes"]
+    A3 --> A5["CHAINE : 12 lignes"]
+    A3 --> A6["DIFFUSION : 240 lignes"]
+```
+
+Lecture de bas en haut :
+
+1. Jointure `CHAINE ⋈ DIFFUSION` : **240** lignes obtenues.
+2. Jointure du résultat avec `PROGRAMME` : **240** lignes obtenues.
+3. Sélection de la chaîne 1 et de la durée minimale : **16** lignes restantes.
+4. Projection des quatre colonnes : **16** lignes.
+
+#### Plan B : sélections avant les jointures (optimisé)
+
+```mermaid
+flowchart TB
+    B0["π colonnes demandées : 16 lignes"] --> B1["⋈ diffusion.id_programme = programme.id_programme : 16 lignes"]
+    B1 --> B2["⋈ chaine.id_chaine = diffusion.id_chaine : 20 lignes"]
+    B1 --> B3["σ durée ≥ 60 : 72 lignes"]
+    B2 --> B4["σ id_chaine = 1 : 1 ligne"]
+    B2 --> B5["DIFFUSION : 240 lignes"]
+    B4 --> B6["CHAINE : 12 lignes"]
+    B3 --> B7["PROGRAMME : 120 lignes"]
+```
+
+Lecture de bas en haut :
+
+1. Sélection sur `CHAINE` : **12 → 1** ligne.
+2. Sélection sur `PROGRAMME` : **120 → 72** lignes.
+3. Jointure entre la chaîne retenue et `DIFFUSION` : **20** lignes.
+4. Jointure de ces diffusions avec les 72 programmes assez longs : **16** lignes.
+5. Projection des quatre colonnes : **16** lignes.
+
+#### Calcul du coût de chaque plan
+
+Pour comparer les plans, nous adoptons un **modèle de coût pédagogique simplifié, sans index**, avec les hypothèses suivantes :
+
+- Une sélection sur une relation de **N** lignes nécessite **N tests**.
+- Une jointure par boucles imbriquées entre deux relations de **N** et **M** lignes nécessite **N × M comparaisons**.
+- Une projection sur **N** lignes nécessite **N traitements**.
+- Nous ignorons ici le coût d'entrée/sortie disque, les index, le tri final et les optimisations propres à MySQL.
+
+**Plan A :**
+
+| Étape | Lignes en sortie | Coût estimé |
+|---|---:|---:|
+| `CHAINE ⋈ DIFFUSION` | 240 | 12 × 240 = 2 880 |
+| Jointure du résultat avec `PROGRAMME` | 240 | 240 × 120 = 28 800 |
+| Sélection des diffusions recherchées | 16 | 240 |
+| Projection finale | 16 | 16 |
+| **Total A** | **16** | **31 936** |
+
+**Plan B :**
+
+| Étape | Lignes en sortie | Coût estimé |
+|---|---:|---:|
+| Sélection de la chaîne 1 | 1 | 12 |
+| Sélection des programmes d'au moins 60 min | 72 | 120 |
+| Jointure de la chaîne 1 avec `DIFFUSION` | 20 | 1 × 240 = 240 |
+| Jointure du résultat avec les programmes sélectionnés | 16 | 20 × 72 = 1 440 |
+| Projection finale | 16 | 16 |
+| **Total B** | **16** | **1 828** |
+
+#### Conclusion
+
+Les deux arbres produisent les **mêmes 16 lignes**. Cependant, avec notre modèle de calcul simplifié, le plan B nécessite **1 828 traitements**, contre **31 936** pour le plan A, soit environ **17,5 fois moins**.
+
+Le **plan B est donc le plus avantageux dans le modèle de coût retenu**, parce qu'il filtre les données **avant** les jointures et réduit le nombre de comparaisons nécessaires.
+
+**Limite :** cette estimation est une étude **d'algèbre relationnelle**, et non une mesure du plan réellement choisi par MySQL. Les index, la méthode de jointure, les statistiques et le tri peuvent modifier les coûts réels. `EXPLAIN` permettrait de vérifier le plan physique sélectionné par MySQL.
