@@ -239,7 +239,7 @@ Le modèle contient **15 tables**, dont 4 tables d'association.
 
 
 
-## V. Interrogation de la base de données
+## 6. Interrogation de la base de données
 
 ### 1. Scénario d'utilisation
 
